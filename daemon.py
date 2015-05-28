@@ -47,13 +47,6 @@ class Daemon(object):
         self.umask = umask
         self.daemon_alive = True
         self.use_gevent = use_gevent
-        self.connection = connection
-
-    def set_connection(self, connection):
-        self.connection = connection
-
-    def get_connection(self):
-        return self.connection
 
     def daemonize(self):
         """
