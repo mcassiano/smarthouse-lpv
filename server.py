@@ -1,8 +1,12 @@
 import requests
-from flask import Flask, request
-app = Flask(__name__)
+from flask import Flask, request, send_from_directory
+app = Flask(__name__, static_url_path='/static')
 
 local_server = 'http://192.168.42.10:5000/send'
+
+@app.route("/admin", methods = ['GET'])
+def admin():
+	return send_from_directory('admin', path)
 
 @app.route("/getTemp", methods = ['GET'])
 def getTemp():

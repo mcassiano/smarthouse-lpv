@@ -1,0 +1,30 @@
+body {
+	margin: 0;
+	padding: 0;
+}
+
+#container {
+	margin: 0 auto;
+	width: 400px;
+}
+
+.led-icon {
+	font-size: 40pt;
+}
+
+.red {
+	color: #F63D30;
+}
+
+.yellow {
+	color: #E9F630;
+}
+
+.sun {
+	font-size: 40pt;
+	color: #FDB813;
+}
+
+td {
+	text-align: center;
+}
