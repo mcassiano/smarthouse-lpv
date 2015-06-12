@@ -44,7 +44,7 @@ void processCommand(char* stringBuffer) {
       if (strcmp(token, "state") == 0) {
         getRGBColor();
         return;
-      }  
+      }
       
       rgb[i] = atoi(token);
     }
@@ -63,9 +63,9 @@ void processCommand(char* stringBuffer) {
       int state = ledState(led);
       
       if (state == HIGH)
-        Serial.print("{'status': 'OK', 'state': 'on'}\n");
+        Serial.print("{\"status\": \"OK\", \"state\": \"on\"}\n");
       else
-        Serial.print("{'status': 'OK', 'state': 'off'}\n");
+        Serial.print("{\"status\": \"OK\", \"state\": \"off\"}\n");
         
       return;
     }
@@ -85,7 +85,7 @@ void readTemperature() {
   int val = analogRead(tempPin);
   float cel = val*0.322265625;
         
-  Serial.print("{'temperature': ");
+  Serial.print("{\"temperature\": ");
   Serial.print(cel);
   Serial.print("}\n");
     
@@ -93,7 +93,7 @@ void readTemperature() {
 
 void toggleLed(int led) {
   digitalWrite(led, !digitalRead(led));
-  Serial.print("{'status': 'OK'}\n");
+  Serial.print("{\"status\": \"OK\"}\n");
 }
 
 int ledState(int led) {
@@ -111,7 +111,15 @@ void mudaCorRGB(int red, int green, int blue) {
  analogWrite(greenPin, green);
  analogWrite(bluePin, blue);
  
- Serial.print("{'status': 'OK'}\n");
+ Serial.print("{\"status\": \"OK\", ");
+ Serial.print("\"color\": {\"");
+ Serial.print("red\": ");
+ Serial.print(255 - red);
+ Serial.print(", \"green\": ");
+ Serial.print(255 - green);
+ Serial.print(", \"blue\": ");
+ Serial.print(255 - blue);
+ Serial.print("}}\n");
 }
 
 void getRGBColor() {
@@ -120,7 +128,7 @@ void getRGBColor() {
   int green = 255 - analogRead(greenPin);
   int blue = 255 - analogRead(bluePin);
   
-  Serial.print("{'status': 'OK'}");
+  Serial.print("{\"status\": \"OK\"}");
 //  Serial.print("'color': '{'");
 //  Serial.print("'red': ");
 //  Serial.print(red);

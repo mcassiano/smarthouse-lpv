@@ -14,7 +14,7 @@ class ArduinoConnection:
 				print "[DEBUG] [ARDUINO] Server has been instantiated."
 				print "[DEBUG] [ARDUINO] Connecting to Arduino..."
 
-			self.serialCom = serial.Serial(serialPort, serialSpeed)
+			self.serialCom = serial.Serial(serialPort, serialSpeed, timeout = 3)
 
 			if self.debug:
 				print "[DEBUG] [ARDUINO] Established connection."
@@ -23,7 +23,7 @@ class ArduinoConnection:
 			if self.debug:
 				print "[DEBUG] [ARDUINO] Port already open!"
 
-			self.serialCom = serial.serial_for_url(serialPort, serialSpeed)
+			self.serialCom = serial.serial_for_url(serialPort, serialSpeed, timeout = 3)
 			
 			if self.debug:
 				print "[DEBUG] [ARDUINO] Established connection."
@@ -31,13 +31,11 @@ class ArduinoConnection:
 
 	def write_and_get_response(self, message):
 		self.serialCom.write(message)
-		res = self.read()
 
 		if self.debug:
 			print "[DEBUG] [ARDUINO] Written: " + message + '.'
 			print "[DEBUG] [ARDUINO] Read: " + res + '.'
 
-		return res
 
 	def read(self):
 		return self.serialCom.readline().rstrip()
