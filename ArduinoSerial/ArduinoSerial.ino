@@ -1,14 +1,10 @@
-#include "DHT.h"
 
-#define DHTPIN A2
-#define DHTTYPE DHT11
 #define COMMON_ANODE
 
 int redPin = 9;
 int greenPin = 10;
 int bluePin = 11;
-
-DHT dht(DHTPIN, DHTTYPE);
+int tempPin = A1;
 
 char stringBuffer[500];
 
@@ -16,7 +12,6 @@ char stringBuffer[500];
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(9600);
-  //dht.begin();
   pinMode(redPin, OUTPUT);
   pinMode(greenPin, OUTPUT);
   pinMode(bluePin, OUTPUT);
@@ -30,12 +25,12 @@ void loop() {
     // put your main code here, to run repeatedly:
     if (Serial.available()) {
         int i = readCommand(stringBuffer);
-        tokenize(stringBuffer);
+        processCommand(stringBuffer);
     }
     
 }
 
-void tokenize(char* stringBuffer) {
+void processCommand(char* stringBuffer) {
   char s[32];
   strcpy(s, stringBuffer);
   char* token = strtok(s, " ");
@@ -45,6 +40,12 @@ void tokenize(char* stringBuffer) {
     
     for (int i = 0; i < 3; i++) {
       token = strtok(NULL, " ");
+      
+      if (strcmp(token, "state") == 0) {
+        getRGBColor();
+        return;
+      }  
+      
       rgb[i] = atoi(token);
     }
     
@@ -55,23 +56,39 @@ void tokenize(char* stringBuffer) {
     int led;
     
     token = strtok(NULL, " ");
-    led = atoi(token);
     
+    if (strcmp(token, "state") == 0) {
+      token = strtok(NULL, " ");
+      led = atoi(token);
+      int state = ledState(led);
+      
+      if (state == HIGH)
+        Serial.print("{'status': 'OK', 'state': 'on'}\n");
+      else
+        Serial.print("{'status': 'OK', 'state': 'off'}\n");
+        
+      return;
+    }
+    
+    led = atoi(token);
     toggleLed(led);
   }
+  
+  else if (strcmp(token, "temp") == 0) {
+    readTemperature();
+  }
+  
 }
 
 void readTemperature() {
-  
-  float t = dht.readTemperature(); //70.4;
-  float h = dht.readHumidity(); //23;
+    
+  int val = analogRead(tempPin);
+  float cel = val*0.322265625;
         
   Serial.print("{'temperature': ");
-  Serial.print(t);
-  Serial.print(", 'humidity': ");
-  Serial.print(h);
+  Serial.print(cel);
   Serial.print("}\n");
-  
+    
 }
 
 void toggleLed(int led) {
@@ -95,6 +112,24 @@ void mudaCorRGB(int red, int green, int blue) {
  analogWrite(bluePin, blue);
  
  Serial.print("{'status': 'OK'}\n");
+}
+
+void getRGBColor() {
+  
+  int red = 255 - analogRead(redPin);
+  int green = 255 - analogRead(greenPin);
+  int blue = 255 - analogRead(bluePin);
+  
+  Serial.print("{'status': 'OK'}");
+//  Serial.print("'color': '{'");
+//  Serial.print("'red': ");
+//  Serial.print(red);
+//  Serial.print(", 'green': ");
+//  Serial.print(green);
+//  Serial.print(", 'blue': ");
+//  Serial.print(blue);
+//  Serial.print("}}\n");
+  
 }
 
 int readCommand(char *command) {
