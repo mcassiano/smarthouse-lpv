@@ -3,12 +3,14 @@ from ArduinoConnection import ArduinoConnection
 
 app = Flask(__name__)
 
+serialAddress = '/dev/cu.usbmodem1411'
+
 @app.route("/send", methods = ['GET', 'POST'])
 def send():
 
 	if request.method == 'POST':
 		message = str(request.form['message'])
-		connection = ArduinoConnection('/dev/cu.HC-06-DevB', 9600)
+		connection = ArduinoConnection(serialAddress, 9600)
 		connection.write_and_get_response(message)
 		res = connection.read()
 

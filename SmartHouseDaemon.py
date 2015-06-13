@@ -4,6 +4,8 @@ import sys, time
 from daemon import Daemon
 from ArduinoConnection import ArduinoConnection
 
+serialAddress = '/dev/cu.usbmodem1411'
+
 class SmartHouseDaemon(Daemon):
 
 	def run(self):
@@ -17,7 +19,7 @@ if __name__ == "__main__":
 
 	if len(sys.argv) >= 2:
 		if 'start' == sys.argv[1]:
-			connection = ArduinoConnection('/dev/cu.HC-06-DevB', 9600)
+			connection = ArduinoConnection(serialAddress, 9600)
 			print 'Starting daemon...'
 			daemon.start()
 
@@ -29,7 +31,7 @@ if __name__ == "__main__":
 			daemon.restart()
 
 		elif 'arduino' == sys.argv[1]:
-			connection = ArduinoConnection('/dev/cu.HC-06-DevB', 9600)
+			connection = ArduinoConnection(serialAddress, 9600)
 
 			if 'send' == sys.argv[2]:
 				message = sys.argv[3]
