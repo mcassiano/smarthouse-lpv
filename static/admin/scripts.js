@@ -1,6 +1,6 @@
 $(document).ready(function() {
     registerColorPicker();
-
+    getTemp();
     getLEDState(8);
     getLEDState(12);
     getLEDState(13);
@@ -21,33 +21,42 @@ function registerColorPicker() {
 	});
 }
 
-function setRGB(red, blue, green) {
-	$.get("http://lpv.hakai.in/setRGB", {red: red, blue: blue, green: green}).done(function(data) {
+function setRGB(red1, blue1, green1) {
+	$.get("http://lpv.hakai.in/setRGB", {red: red1, blue: blue1, green: green1}).done(function(data) {
     	console.log(data);
     });
 }
 
-function toggleLED(led) {
-	$.get("http://lpv.hakai.in/toggleLED", {led: led}).done(function(data) {
-    	getLEDState(led);
+function toggleLED(led1) {
+	$.get("http://lpv.hakai.in/toggleLed", {led: led1}).done(function(data) {
+    	getLEDState(led1);
     });
 }
 
 function getTemp() {
-	$.get("http://lpv.hakai.in/getTemp", function(data) {
+	$.get("http://lpv.hakai.in/getTemp").done(function(data) {
+	data = JSON.parse(data);
     	var temp = data.temperature;
     	console.log(data);
-      	$("#temp").html(temp);
+      	$("#temp").html(Math.floor(temp));
     });
 }
 
-function getLEDState(led) {
-	$.get("http://lpv.hakai.in/getLEDState", {led: led}).done(function(data) {
-    	var state = data.state;
+function getLEDState(led1) {
+	$.get("http://lpv.hakai.in/getLEDState", {led: led1}).done(function(data) {
+	var ledContainer = $("#led"+led1);
+	var led = ledContainer.find('i');
+	data = JSON.parse(data);
+	state = data.state;
+	console.log(ledContainer);
 
-    	if (state == 'off')
-    		$("#led"+led).attr('class', 'fa fa-toggle-off');
-    	else
-    		$("#led"+led).attr('class', 'fa fa-toggle-on');
+    	if (state == "off") {
+    		led.attr('class', 'fa fa-toggle-off');
+		ledContainer.find('span').html('Liga');
+	}
+    	else {
+    		led.attr('class', 'fa fa-toggle-on');
+		ledContainer.find('span').html('Desliga');
+	}
     });
 }
